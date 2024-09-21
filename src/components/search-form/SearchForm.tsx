@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Grid, Button } from "@mui/material";
 import { InputField } from "../input-field";
 import { DateSelector } from "../date-selector";
+import { SearchFormStyled } from "./SearchForm.styles";
 
 interface SearchFormProps {
+  disabled?: boolean;
   onSubmit: (params: {
     origin: string;
     destination: string;
@@ -14,84 +16,89 @@ interface SearchFormProps {
   }) => void;
 }
 
-export const SearchForm: React.FC<SearchFormProps> = ({ onSubmit }) => {
-  const [origin, setOrigin] = useState("");
-  const [destination, setDestination] = useState("");
-  const [departureDate, setDepartureDate] = useState("");
-  const [returnDate, setReturnDate] = useState("");
-  const [adults, setAdults] = useState("1");
-  const [cabinClass, setCabinClass] = useState("economy"); // Default
+export const SearchForm: React.FC<SearchFormProps> = (props) => {
+  const { onSubmit, disabled } = props;
+
+  const [formState, setFormState] = useState({
+    origin: "",
+    destination: "",
+    departureDate: "",
+    returnDate: "",
+    adults: "1",
+    cabinClass: "economy",
+  });
+
+  const handleChange = (field: string, value: string) => {
+    setFormState((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const searchParams = {
-      origin,
-      destination,
-      departureDate,
-      returnDate,
-      adults,
-      cabinClass,
-    };
-
-    onSubmit(searchParams);
+    onSubmit(formState);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} md={6}>
-          <InputField
-            label="Origin"
-            placeholder="Enter origin city or airport"
-            value={origin}
-            onChange={setOrigin}
-          />
+    <SearchFormStyled>
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={6}>
+            <InputField
+              label="Origin"
+              placeholder="Enter origin city or airport"
+              value={formState.origin}
+              onChange={(value) => handleChange("origin", value)}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <InputField
+              label="Destination"
+              placeholder="Enter destination city or airport"
+              value={formState.destination}
+              onChange={(value) => handleChange("destination", value)}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <DateSelector
+              label="Departure Date"
+              value={formState.departureDate}
+              onChange={(value) => handleChange("departureDate", value)}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <DateSelector
+              label="Return Date"
+              value={formState.returnDate}
+              onChange={(value) => handleChange("returnDate", value)}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <InputField
+              label="Passengers"
+              placeholder="Number of adults"
+              value={formState.adults}
+              onChange={(value) => handleChange("adults", value)}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <InputField
+              label="Cabin Class"
+              placeholder="e.g. economy"
+              value={formState.cabinClass}
+              onChange={(value) => handleChange("cabinClass", value)}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              disabled={disabled}
+              variant="contained"
+              type="submit"
+              fullWidth
+            >
+              Explore
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <InputField
-            label="Destination"
-            placeholder="Enter destination city or airport"
-            value={destination}
-            onChange={setDestination}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <DateSelector
-            label="Departure Date"
-            value={departureDate}
-            onChange={setDepartureDate}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <DateSelector
-            label="Return Date"
-            value={returnDate}
-            onChange={setReturnDate}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <InputField
-            label="Passengers"
-            placeholder="Number of adults"
-            value={adults}
-            onChange={setAdults}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <InputField
-            label="Cabin Class"
-            placeholder="e.g. economy"
-            value={cabinClass}
-            onChange={setCabinClass}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Button variant="contained" type="submit" fullWidth>
-            Search Flights
-          </Button>
-        </Grid>
-      </Grid>
-    </form>
+      </form>
+    </SearchFormStyled>
   );
 };

@@ -6,6 +6,9 @@ import {
   FlightItinerary,
 } from "../../api/flights";
 import { cityMapper } from "./Home.utils";
+import { FlightsList } from "./flights-list";
+import { ErrorText, FormWrapper, HomeStyled, TopImage } from "./Home.styles";
+import { Container } from "../../components/container";
 
 export const Home: React.FC = () => {
   const [flights, setFlights] = useState<FlightItinerary[]>([]);
@@ -71,40 +74,20 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Search Flights</h1>
-      <SearchForm onSubmit={handleSearch} />
+    <HomeStyled>
+      <Container>
+        <TopImage />
 
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+        <FormWrapper>
+          <h1 className="title">Flights</h1>
+          <SearchForm disabled={loading} onSubmit={handleSearch} />
 
-      {flights.length > 0 && (
-        <ul>
-          {flights.map((flight, index) => (
-            <li
-              key={index}
-              style={{ marginBottom: "1em", listStyleType: "none" }}
-            >
-              <p>
-                <strong>Flight:</strong> {flight.legs[0].origin.name} to{" "}
-                {flight.legs[0].destination.name} - {flight.price.formatted}
-              </p>
-              <p>
-                <strong>Duration:</strong>{" "}
-                {Math.floor(flight.legs[0].durationInMinutes / 60)}h{" "}
-                {flight.legs[0].durationInMinutes % 60}m
-              </p>
-              <p>
-                <strong>Carrier:</strong>{" "}
-                {flight.legs[0].carriers.marketing
-                  .map((carrier) => carrier.name)
-                  .join(", ")}
-              </p>
-              <hr />
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+          {loading && <p>Loading...</p>}
+          {error && <ErrorText>{error}</ErrorText>}
+
+          {flights.length > 0 && <FlightsList flights={flights} />}
+        </FormWrapper>
+      </Container>
+    </HomeStyled>
   );
 };
