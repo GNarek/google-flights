@@ -1,29 +1,31 @@
 import React from "react";
-import { Grid, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 
-export const DateSelector: React.FC = () => {
+interface DateSelectorProps {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export const DateSelector: React.FC<DateSelectorProps> = ({
+  label,
+  value,
+  onChange,
+}) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.value);
+  };
+
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={6}>
-        <TextField
-          fullWidth
-          label="Departure Date"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          variant="outlined"
-          margin="normal"
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
-          fullWidth
-          label="Return Date"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          variant="outlined"
-          margin="normal"
-        />
-      </Grid>
-    </Grid>
+    <TextField
+      fullWidth
+      label={label}
+      type="date"
+      InputLabelProps={{ shrink: true }}
+      value={value}
+      onChange={handleChange}
+      variant="outlined"
+      margin="normal"
+    />
   );
 };
